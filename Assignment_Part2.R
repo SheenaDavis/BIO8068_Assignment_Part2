@@ -168,7 +168,7 @@ model %>% compile(
 )
 
 #Set the deep-learning model off 
-# Train the model with fit_generator
+# Train the model using fit_generator
 history <- model %>% fit_generator(
   # training data
   train_image_array_gen,
@@ -185,16 +185,17 @@ history <- model %>% fit_generator(
   verbose = 2
 )
 
-
+#plot the run history of the model
 plot(history)
 
-#Saving your model for future use
+#Saving model for future use
 # The imager package also has a save.image function, so unload it to
 # avoid any confusion
 detach("package:imager", unload = TRUE)
 
 # The save.image function saves your whole R workspace
-save.image("beetles.RData")
+#save using appropriate file name 
+save.image("beetles3.RData")
 
 # Saves only the model, with all its weights and configuration, in a special
 # hdf5 file on its own. You can use load_model_hdf5 to get it back.
@@ -237,7 +238,9 @@ obs_values <- factor(c(rep(spp_list[1],100),
                        rep(spp_list[3], 100)))
 pred_values <- factor(colnames(predictions)[apply(predictions, 1, which.max)])
 
+#load caret library
 library(caret)
+#run confusion matrix for model sensitivity and specitivity.
 conf_mat <- confusionMatrix(data = pred_values, reference = obs_values)
 conf_mat
 
@@ -259,4 +262,6 @@ pred <- model %>% predict(test_image)
 pred <- data.frame("Species" = spp_list, "Probability" = t(pred))
 pred <- pred[order(pred$Probability, decreasing=T),][1:3,]
 pred$Probability <- paste(round(100*pred$Probability,2),"%")
+
+#view predicted image 
 pred
